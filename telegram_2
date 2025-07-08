@@ -1,0 +1,30 @@
+from telethon.sync import TelegramClient, events
+import re
+
+# Paste your API credentials here
+api_id = YOUR_API_ID
+api_hash = 'YOUR_API_HASH'
+
+# The Telegram group username or ID you want to monitor
+group_name = 'your_group_username_or_id'
+
+KEYWORDS = ["CBDC", "ISO 20022", "central bank", "interoperability", "pilot", "digital yuan", "quant", "xdc", "wholesale", "retail CBDC"]
+
+client = TelegramClient('session_session', api_id, api_hash)
+
+@client.on(events.NewMessage(chats=group_name))
+async def handler(event):
+    message = event.message.message
+    urls = re.findall(r'(https?://\S+)', message)
+    for keyword in KEYWORDS:
+        if keyword.lower() in message.lower():
+            print(f"🚨 Keyword match: {keyword}")
+            print(f"Message: {message}")
+            print("-" * 50)
+            break
+    if urls:
+        print(f"🔗 Found links: {urls}")
+
+client.start()
+print("📡 Listening for messages in the group...")
+client.run_until_disconnected()
