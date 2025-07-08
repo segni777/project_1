@@ -1,1 +1,50 @@
+import feedparser
+from newspaper import Article
+import requests
+from bs4 import BeautifulSoup
+
+KEYWORDS = ["CBDC", "central bank digital currency", "pilot", "ISO 20022", "interoperability", "wholesale", "retail CBDC"]
+
+SOURCES = {
+    "Reuters CBDC": "https://www.reuters.com/rssFeed/cryptocurrenciesNews",
+    "DL News": "https://www.dlnews.com/rss/",
+    "BIS": "https://www.bis.org/rss/press.xml",
+    "IMF": "https://www.imf.org/en/News/rss"
+}
+
+def fetch_and_parse_rss(url):
+    try:
+        return feedparser.parse(url).entries
+    except Exception as e:
+        print(f"Failed to parse RSS: {url}")
+        return []
+
+def article_contains_keywords(url):
+    try:
+        article = Article(url)
+        article.download()
+        article.parse()
+        text = article.text.lower()
+        return any(keyword.lower() in text for keyword in KEYWORDS)
+    except Exception as e:
+        return False
+
+def scrape_signals():
+    print("🔍 Scanning for CBDC signals...\n")
+    for source, rss_url in SOURCES.items():
+        print(f"📡 Source: {source}")
+        entries = fetch_and_parse_rss(rss_url)
+        found = 0
+        for entry in entries[:10]:  # Limit to 10 headlines per source
+            link = entry.link
+            title = entry.title
+            if article_contains_keywords(link):
+                print(f"✅ [{title}]({link})")
+                found += 1
+        if found == 0:
+            print("No CBDC-related signals found.\n")
+        print("-" * 60)
+
+if __name__ == "__main__":
+    scrape_signals()
 
