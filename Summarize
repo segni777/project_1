@@ -1,0 +1,20 @@
+import openai
+
+openai.api_key = 'YOUR_OPENAI_API_KEY'
+
+def ai_summarize(text):
+    response = openai.ChatCompletion.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant specializing in CBDC news."},
+            {"role": "user", "content": f"Summarize this focusing on CBDC developments:\n\n{text}"}
+        ],
+        max_tokens=150,
+        temperature=0.2,
+    )
+    summary = response['choices'][0]['message']['content']
+    return summary
+
+# Example usage:
+article_text = "The Bank of Thailand announced a pilot program for a retail CBDC..."
+print(ai_summarize(article_text))
