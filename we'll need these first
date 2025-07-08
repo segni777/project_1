@@ -1,3 +1,10 @@
 Prerequisites
 
 pip install feedparser newspaper3k beautifulsoup4 requests lxml
+
+
+
+Telegram api credentials
+
+
+pip install telethon
